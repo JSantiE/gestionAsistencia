@@ -1,0 +1,296 @@
+<!--/* Thymeleaf templating engine, Each token will be replaced by their respective titles in the resulting page. */-->
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.w3.org/1999/xhtml"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout}">
+<head>
+    <script>
+        $(document).ready(function () {
+            $('.inputTipoPersona_hide').addClass('collapse');
+            
+            $("#inputApePaterno").bind('keypress', function (event) {
+                var regex = new RegExp("^[a-zA-Z ]+$");
+                var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+                if (!regex.test(key)) {
+                    event.preventDefault();
+                    return false;
+                }
+            });
+
+            $("#inputApeMaterno").bind('keypress', function (event) {
+                var regex = new RegExp("^[a-zA-Z ]+$");
+                var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+                if (!regex.test(key)) {
+                    event.preventDefault();
+                    return false;
+                }
+            });
+
+            $("#inputNombres").bind('keypress', function (event) {
+                var regex = new RegExp("^[a-zA-Z ]+$");
+                var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+                if (!regex.test(key)) {
+                    event.preventDefault();
+                    return false;
+                }
+            });
+
+            $("#inputNroDocumento").bind('keypress', function (event) {
+                var regex = new RegExp("^[0-9]+$");
+                var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+                if (!regex.test(key)) {
+                    event.preventDefault();
+                    return false;
+                }
+            });
+
+            $("#inputTelefono").bind('keypress', function (event) {
+                var regex = new RegExp("^[0-9]+$");
+                var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+                if (!regex.test(key)) {
+                    event.preventDefault();
+                    return false;
+                }
+            });
+        });
+
+        function replaceItems(html) {
+            $('#direcciones').replaceWith($(html));
+            clearDireccionNueva();
+        }
+    </script>
+    <title>Guardar Empleado</title>
+</head>
+<body>
+<div layout:fragment="breadcrumb">
+    <h1 th:text="#{EmpleadoForm.Title}"></h1>
+    <ol class="breadcrumb">
+        <li><a href="/"><i class="fa fa-dashboard"></i> <span th:text="#{Home.Title}"/></a></li>
+        <li class="active" th:text="Empleado">Guardar Empleado</li>
+    </ol>
+</div>
+<div layout:fragment="content">
+    <div class="row">
+        <div class="col-md-12">
+            <form role="form" th:object="${empleado}" method="post">
+                <div class="box box-primary">
+                    <div id="exTab1">
+
+                        <ul class="nav nav-pills">
+                            <li class="active">
+                                <a href="#1a" data-toggle="tab" th:text="#{EmpleadoForm.DatosGenerales}"></a>
+                            </li>
+                            <li><a href="#2a" data-toggle="tab" th:text="#{EmpleadoForm.DatosLaborales}"></a>
+                            </li>
+                        </ul>
+
+                        <div class="box-body">
+                            <div class="tab-content">
+                                <input th:type="hidden" th:field="${empleado.idEmpleado}"/>
+                                <div class="tab-pane active" id="1a">
+                                    <div class="form-row">                                        
+                                        <div class="form-group col-md-4">
+                                            <label for="inputCodigoMarcacion" th:text="'Codigo Marcacion'"></label>
+                                            <small class="form-text text-danger"
+                                                   th:if="${#fields.hasErrors('codigoMarcacion')}"
+                                                   th:errors="*{codigoMarcacion}"></small>
+                                            <input type="text" class="form-control"
+                                                   id="inputCodigoMarcacion"
+                                                   th:field="${empleado.codigoMarcacion}"
+                                                   placeholder="Codigo Marcacion"
+                                                   maxlength="20">
+                                        </div>
+                                        <div class="form-group col-md-4">
+                                            <label for="inputNombres" th:text="Nombres"></label>
+                                            <small class="form-text text-danger"
+                                                   th:if="${#fields.hasErrors('nombres')}"
+                                                   th:errors="*{nombres}"></small>
+                                            <input type="text" class="form-control"
+                                                   id="inputNombres"
+                                                   th:field="${empleado.nombres}"
+                                                   placeholder="Nombres"
+                                                   maxlength="50">
+                                        </div>
+                                        <div class="form-group col-md-4">
+                                            <label for="inputApePaterno" th:text="'Apellido Paterno'"></label>
+                                            <small class="form-text text-danger"
+                                                   th:if="${#fields.hasErrors('apePaterno')}"
+                                                   th:errors="*{apePaterno}"></small>
+                                            <input type="text" class="form-control"
+                                                   id="inputApePaterno"
+                                                   th:field="${empleado.apePaterno}"
+                                                   placeholder="Ape Paterno"
+                                                   maxlength="50">
+                                        </div>
+                                        <div class="form-group col-md-4">
+                                            <label for="inputApeMaterno" th:text="'Apellido Materno'"></label>
+                                            <small class="form-text text-danger"
+                                                   th:if="${#fields.hasErrors('apeMaterno')}"
+                                                   th:errors="*{apeMaterno}"></small>
+                                            <input type="text" class="form-control"
+                                                   id="inputApeMaterno"
+                                                   th:field="${empleado.apeMaterno}"
+                                                   placeholder="Ape Materno"
+                                                   maxlength="50">
+                                        </div>
+                                        <div class="form-group col-md-4">
+                                            <label for="inputTipoDocumento" th:text="#{EmpleadoForm.TipoDocumento}"></label>
+                                            <select id="inputTipoDocumento"
+                                                    class="form-control"
+                                                    th:field="${empleado.idTipoDoc}">
+											    <option th:each="tipoDocOpt : ${T(pe.com.datatech.asistencia.web.controller.enums.EnumTipoDocumento).values()}" 
+											        th:value="${tipoDocOpt}" th:text="${tipoDocOpt.value}"></option>
+											</select>
+                                        </div>
+                                       
+                                        <div class="form-group col-md-4">
+                                            <label for="inputNroDocumento" th:text="#{EmpleadoForm.NroDocumento}"></label>
+                                            <small class="form-text text-danger"
+                                                   th:if="${#fields.hasErrors('nroDocumento')}"
+                                                   th:errors="*{nroDocumento}"></small>
+                                            <input type="text" class="form-control"
+                                                   id="inputNroDocumento"
+                                                   th:field="${empleado.nroDocumento}"
+                                                   placeholder="Nro. Documento"
+                                                   maxlength="11">
+                                        </div>
+                                        
+                                        <div class="form-group col-md-4">
+                                            <label for="inputFechaNacimiento" th:text="'Fecha Nacimiento'"></label>&nbsp;<i
+                                                class="fa fa-calendar">
+                                        	</i>
+                                            <small class="form-text text-danger"
+                                                   th:if="${#fields.hasErrors('fechaNacimiento')}"
+                                                   th:errors="*{fechaNacimiento}"></small>
+                                            <input type="text" class="form-control"
+                                                   id="inputFechaNacimiento"
+                                                   th:field="${empleado.fechaNacimiento}"
+                                                   name="inputFechaNacimiento"
+                                                   data-provide="datepicker"
+                                                   data-date-format="dd/mm/yyyy"
+                                                   data-date-language="es-PE"
+                                                   data-date-autoclose="true"
+                                                   data-date-today-highlight="true"
+                                                   data-date-end-date="0d"
+                                                   data-date-orientation="bottom"
+                                                   maxlength="10"/>
+                                        </div>
+                                        
+                                        <div class="form-group col-md-4">
+                                            <label for="inputFechaIngreso" th:text="'Fecha Ingreso'"></label>&nbsp;<i
+                                                class="fa fa-calendar">
+                                        	</i>
+                                            <small class="form-text text-danger"
+                                                   th:if="${#fields.hasErrors('fechaIngreso')}"
+                                                   th:errors="*{fechaIngreso}"></small>
+                                            <input type="text" class="form-control"
+                                                   id="inputFechaIngreso"
+                                                   th:field="${empleado.fechaIngreso}"
+                                                   name="inputFechaIngreso"
+                                                   data-provide="datepicker"
+                                                   data-date-format="dd/mm/yyyy"
+                                                   data-date-language="es-PE"
+                                                   data-date-autoclose="true"
+                                                   data-date-today-highlight="true"
+                                                   data-date-end-date="0d"
+                                                   data-date-orientation="bottom"
+                                                   maxlength="10"/>
+                                        </div>
+                                     
+                                     	<div class="form-group col-md-4">
+                                            <label for="inputSexo" th:text="Sexo"></label>
+                                            <select id="inputSexo"
+                                                    class="form-control"
+                                                    th:field="${empleado.sexo}">
+											    <option th:each="sexoOpt : ${T(pe.com.datatech.asistencia.web.controller.enums.EnumSexo).values()}" 
+											        th:value="${sexoOpt}" th:text="${sexoOpt.value}"></option>
+											</select>
+                                        </div>
+                                     
+                                     	<div class="form-group col-md-4">
+                                            <label for="inputDireccion" th:text="Direccion"></label>
+                                            <small class="form-text text-danger"
+                                                   th:if="${#fields.hasErrors('direccion')}"
+                                                   th:errors="*{direccion}"></small>
+                                            <input type="text" class="form-control"
+                                                   id="inputDireccion"
+                                                   th:field="${empleado.direccion}"
+                                                   placeholder="Direccion"
+                                                   maxlength="200">
+                                        </div>
+                                        
+                                        <div class="form-group col-md-4">
+                                            <label for="inputTelefono" th:text="Telefono"></label>
+                                            <small class="form-text text-danger"
+                                                   th:if="${#fields.hasErrors('telefono')}"
+                                                   th:errors="*{telefono}"></small>
+                                            <input type="text" class="form-control"
+                                                   id="inputTelefono"
+                                                   th:field="${empleado.telefono}"
+                                                   placeholder="Telefono"
+                                                   maxlength="20">
+                                        </div>
+                                     
+                                        <div class="form-group col-md-4">
+                                            <label for="inputCorreoElectronico" th:text="#{EmpleadoForm.CorreoElectronico}"></label>
+                                            <small class="form-text text-danger"
+                                                   th:if="${#fields.hasErrors('email')}"
+                                                   th:errors="*{email}"></small>
+                                            <input type="text" class="form-control"
+                                                   id="inputCorreoElectronico"
+                                                   th:field="${empleado.email}"
+                                                   maxlength="40">
+                                        </div>
+                                        
+                                        <div class="form-group col-md-4">
+                                            <label for="inputEstado" th:text="Estado"></label>
+                                            <select id="inputEstado"
+                                                    class="form-control"
+                                                    th:field="${empleado.estado}">
+											    <option th:each="tipoEstadoOpt : ${T(pe.com.datatech.asistencia.web.controller.enums.EnumTipoEstado).values()}" 
+											        th:value="${tipoEstadoOpt}" th:text="${tipoEstadoOpt.value}"></option>
+											</select>
+                                        </div>                                             
+                                         <input th:type="hidden"
+                                               th:field="${empleado.idUsuarioCreacion}"
+                                               th:if="${empleado.estado!=null}"/>
+                                         <input th:type="hidden"
+                                               th:field="${empleado.fechaCreacion}"
+                                               th:if="${empleado.fechaCreacion!=null}"/>
+                                    </div>
+                                </div>
+
+                                <div class="tab-pane" id="2a">
+                                    <div class="form-row">
+                                    	<div class="form-group col-md-4">
+                                            <label for="inputArea" th:text="Area"></label>
+                                            <select id="inputArea"
+                                                    class="form-control"
+                                                    th:field="${empleado.idArea}"
+                                                    th:if="${empleado.idArea==null}">
+                                                <option th:each="area : ${allArea}"
+                                                        th:value="${area.idArea}"
+                                                        th:text="${area.nombreArea}"/>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="box-footer with-border">
+                        <a th:href="@{/empleado/list}" class="btn btn-default" role="button"
+                           title="Back list" th:text="#{EmpleadoForm.Cancelar}">
+                            <span aria-hidden="true"></span>
+                        </a>
+                        <button type="submit" class="box-title btn btn-primary"
+                                title="Save Data" th:text="#{EmpleadoForm.Guardar}">
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>
